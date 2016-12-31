@@ -1,0 +1,17 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "A web scraper to populate the database with prices!",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bevin Hernandez",
+  "license": "MIT",
+  "dependencies": {
+    "scraperjs": "^1.2.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
