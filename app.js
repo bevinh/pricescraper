@@ -4,6 +4,7 @@ var mkdirp = require('mkdirp');
 var arrayOfHrefs = [];
 var arrayOfTitles = [];
 var arrayOfImages = [];
+var putTogetherArray = [];
 var path = "data";
 
 //the mkdirp module makes the folder, but if it already exists, it does nothing
@@ -21,6 +22,7 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
         }).get();
     })
     .then(function(scrapeArray) {
+        //then scrape the sub-array
         function scrapeArrayLinks() {
             //push the hrefs into an array
             for(i=0;i<scrapeArray.length;i++){
@@ -30,8 +32,11 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
             }
             console.log(arrayOfHrefs);
         }
+
         scrapeArrayLinks();
+        //scrape for the images, based on this array
         imageScraping();
+        //scrape for the details, based on this array
         detailsScraping();
 
 
@@ -63,10 +68,21 @@ function detailsScraping() {
             .then(function (shirtTitle) {
                 var title = shirtTitle;
                 arrayOfTitles.push(title);
-                console.log(arrayOfTitles);
+                console.log(parseDetailsArray(title));
             })
 
     }
+}
+function parseDetailsArray(detailsArray){
+    for (i=0;i < detailsArray.length; i++){
+        var titleSplit = detailsArray[i].substr(detailsArray[i].indexOf(' ')+1);
+        console.log(titleSplit);
+        putTogetherArray.push(titleSplit);
+        var priceSplit = detailsArray[i].substr(0,detailsArray[i].indexOf(' '));
+        console.log(priceSplit);
+        putTogetherArray.push(priceSplit);
+    }
+    console.log(putTogetherArray);
 }
 
 
