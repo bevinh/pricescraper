@@ -1,10 +1,49 @@
 var scraperjs = require('scraperjs');
-scraperjs.StaticScraper.create('https://news.ycombinator.com/')
+//setup the collection arrays
+var arrayOfHrefs = [];
+var arrayOfPrices = [];
+//scrape the site to determine the subpages
+scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
     .scrape(function($) {
-        return $(".title a").map(function() {
-            return $(this).text();
+        return $(".products li a").map(function() {
+            //pull the hrefs
+            return $(this).attr("href");
         }).get();
     })
-    .then(function(news) {
-        console.log(news);
-    })
+    .then(function(scrapeArray) {
+        function scrapeArrayLinks() {
+            //push the hrefs into an array
+            for(i=0;i<scrapeArray.length;i++){
+                var shirtLink = "http://www.shirts4mike.com/"
+                shirtLink += scrapeArray[i];
+                arrayOfHrefs.push(shirtLink);
+            }
+            console.log(arrayOfHrefs);
+        }
+        scrapeArrayLinks();
+        postScraping();
+
+
+    });
+function postScraping() {
+    for (i = 0; i < arrayOfHrefs.length; i++) {
+        scraperjs.StaticScraper.create(arrayOfHrefs[i])
+            .scrape(function ($) {
+                return $(".price").map(function () {
+                    return $(this).text();
+                }).get();
+            })
+            .then(function (shirtData) {
+                var price = shirtData;
+                arrayOfPrices.push(price);
+                console.log(arrayOfPrices);
+            })
+
+    }
+}
+
+
+//TODO: Check for data folder
+//TODO: Create data folder if folder doesn't exist
+
+//TODO: Write data to CSV file and save

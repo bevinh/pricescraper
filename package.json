@@ -4,14 +4,12 @@
   "description": "A web scraper to populate the database with prices!",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
   "author": "Bevin Hernandez",
   "license": "MIT",
   "dependencies": {
+    "phantomjs": "^2.1.7",
     "scraperjs": "^1.2.0"
-  },
-  "scripts": {
-    "start": "node app.js"
   }
 }
