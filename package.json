@@ -9,6 +9,8 @@
   "author": "Bevin Hernandez",
   "license": "MIT",
   "dependencies": {
+    "fast-csv": "^2.3.0",
+    "mkdirp": "^0.5.1",
     "phantomjs": "^2.1.7",
     "scraperjs": "^1.2.0"
   }
