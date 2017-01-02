@@ -41,20 +41,17 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
         shirtScraping();
     });
 function shirtScraping() {
-    var pathName = '';
     for (i = 0; i < arrayOfHrefs.length; i++) {
         scraperjs.StaticScraper.create(arrayOfHrefs[i])
             .scrape(function ($) {
-                pathName = arrayOfHrefs[i];
                 return {
                     title: $(".shirt-details h1").first().contents().filter(function() {
                     return this.nodeType == 3;
                 }).text(),
                     price: $(".price").first().text(),
                     imageURL: $(".shirt-picture span img").first().attr("src"),
-                    url: pathName,
+                    url: console.log(i),
                     time: new Date().toLocaleString()
-
                 };
             })
             .then(function (data, options) {
