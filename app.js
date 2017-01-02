@@ -5,6 +5,7 @@ var fs = require('fs');
 var csv = require("fast-csv");
 var request = require('request');
 var cheerio = require('cheerio');
+var quicklog = require('quicklog-easy');
 
 
 //setup the collection arrays
@@ -18,15 +19,17 @@ var shirtUrl;
 var shirtTime;
 var dataKept = [];
 
-//write the function to log any errors to the scraper-error.log file
-function logError(e){
+//wrote the function to log any errors to the scraper-error.log file, but commented it out to use my own npm module
+/*function logError(e){
     var path = 'scraper-error.log';
     var d = new Date();
     var eWrite = "[" + d + " ]";
     eWrite += ":" + e + "\n";
 
         fs.appendFileSync(path, eWrite, encoding='utf8');
-}
+} */
+
+var errorPath = 'scraper-error.log';
 
 //the mkdirp module makes the folder, but if it already exists, it does nothing
 mkdirp(path, function (err) {
@@ -37,12 +40,12 @@ mkdirp(path, function (err) {
 request('http://www.shirts4mike.com/shirts.php', function (error, response, body) {
     //Check for any errors
     if(error){
-        return logError('Oops, something went wrong, looks like an error:', error);
+        return quicklog(errorPath, 'Oops, something went wrong, looks like an error:', error);
     }
 
     //Check for the status code
     if(response.statusCode !== 200){
-        return logError('Oops, something went wrong, looks like an error:', response.statusCode);
+        return quicklog(errorPath, 'Oops, something went wrong, looks like an error:', response.statusCode);
     }
     var $ = cheerio.load(body);
     $('.products li a').each(function(i, element){
@@ -58,12 +61,12 @@ function getShirtData(shirtLink) {
     request(shirtLink, function (error, response, body) {
         //Check for any errors
         if (error) {
-            return logError('Oops, something went wrong, looks like an error:', error);
+            return quicklog(errorPath, 'Oops, something went wrong, looks like an error:', error);
         }
 
         //Check for the status code
         if (response.statusCode !== 200) {
-            return logError('Oops, something went wrong, looks like an error:', response.statusCode);
+            return quicklog(errorPath, 'Oops, something went wrong, looks like an error:', response.statusCode);
         }
        //load the body of the html page we've requested
         var $ = cheerio.load(body);
