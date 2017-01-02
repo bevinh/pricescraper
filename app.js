@@ -10,14 +10,19 @@ var quicklog = require('quicklog-easy');
 
 //setup the collection arrays
 var arrayOfHrefs = [];
-var path = "data";
+var dataKept = [];
+//variables to keep the individual shirts etc.
 var hrefMike;
 var shirtTitle;
 var shirtImage;
 var shirtPrice;
 var shirtUrl;
 var shirtTime;
-var dataKept = [];
+//variable needed to write the scraper-error file with my quicklog-easy module
+var errorPath = 'scraper-error.log';
+//variable for the csv file folder
+var path = "data";
+
 
 //wrote the function to log any errors to the scraper-error.log file, but commented it out to use my own npm module
 /*function logError(e){
@@ -29,8 +34,7 @@ var dataKept = [];
         fs.appendFileSync(path, eWrite, encoding='utf8');
 } */
 
-//variable needed to write the scraper-error file with my quicklog-easy module
-var errorPath = 'scraper-error.log';
+
 
 //the mkdirp module makes the folder, but if it already exists, it does nothing
 mkdirp(path, function (err) {
