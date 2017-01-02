@@ -1,3 +1,5 @@
+/* Content Scraper for Mike's T-shirts, a project by Bevin Hernandez for the Treehouse Full Stack Javascript TechDegree */
+
 var scraperjs = require('scraperjs');
 var mkdirp = require('mkdirp');
 const fs = require('fs');
@@ -5,7 +7,6 @@ var csv = require("fast-csv");
 
 //setup the collection arrays
 var arrayOfHrefs = [];
-var putTogetherArray = [];
 var path = "data";
 var dataKept = [];
 
@@ -24,7 +25,7 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
         }).get();
     })
     .then(function(scrapeArray) {
-        //then scrape the sub-array
+        //then set up the sub-array function to scrape the links
         function scrapeArrayLinks() {
             //push the hrefs into an array
             for(i=0;i<scrapeArray.length;i++){
@@ -33,7 +34,7 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
                 arrayOfHrefs.push(shirtLink);
             }
         }
-
+        //execute the function, to be clear
         scrapeArrayLinks();
         //scrape for the shirt details, based on this array
         shirtScraping();
