@@ -26,8 +26,6 @@ function logError(e){
     eWrite += ":" + e + "\n";
 
         fs.appendFileSync(path, eWrite, encoding='utf8');
-        console.log(eWrite);
-
 }
 
 //the mkdirp module makes the folder, but if it already exists, it does nothing
@@ -67,7 +65,10 @@ function getShirtData(shirtLink) {
         if (response.statusCode !== 200) {
             return logError('Oops, something went wrong, looks like an error:', response.statusCode);
         }
+       //load the body of the html page we've requested
         var $ = cheerio.load(body);
+
+        //find the info about each shirt - this could be different for whatever you're looking for
         shirtTitle = $('.shirt-details h1').first().contents().filter(function () {
             return this.nodeType == 3;
         }).text();
@@ -75,18 +76,23 @@ function getShirtData(shirtLink) {
         shirtImage = $(".shirt-picture span img").first().attr("src");
         shirtUrl = shirtLink;
         shirtTime = new Date().toLocaleString();
+
+        //push each of these into an array
         dataKept.push(shirtTitle, shirtPrice, shirtImage, shirtUrl, shirtTime);
+
+        //call the function to write the csv!
         csvPopulate(dataKept);
     });
 }
 
 function csvPopulate(data){
-    //Get the date for the file to be written
+    //Get the date to create the filename
     var date = new Date();
     var day = date.getDate();
     var month = date.getMonth();
     var year = date.getFullYear();
     var fileName = year + "-" + month + "-" + day;
+
     //create the CSV object and the stream object of data to write to the file system
     var csvStream = csv.createWriteStream({headers: false}),
         writableStream = fs.createWriteStream("data/" + fileName + ".csv");
