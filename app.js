@@ -12,7 +12,7 @@ var dataKept = [];
 //the mkdirp module makes the folder, but if it already exists, it does nothing
 mkdirp(path, function (err) {
     if (err) console.error(err);
-    else console.log('Made data');
+    else console.log('Made data folder');
 });
 
 //scrape the site to determine the subpages
@@ -37,7 +37,6 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
         scrapeArrayLinks();
         //scrape for the shirt details, based on this array
         shirtScraping();
-
     });
 function shirtScraping() {
     for (i = 0; i < arrayOfHrefs.length; i++) {
@@ -52,9 +51,9 @@ function shirtScraping() {
                 };
             })
             .then(function (data, options) {
-              // console.log(data);
+                //push each data object into an array
                 dataKept.push(data);
-                console.log(dataKept);
+                //use the csv Populate function to write the file
                 csvPopulate(dataKept);
             })
 
@@ -64,7 +63,7 @@ function shirtScraping() {
 
 function csvPopulate(data){
     var csvStream = csv.createWriteStream({headers: true}),
-        writableStream = fs.createWriteStream("data/my.csv");
+        writableStream = fs.createWriteStream("data/shirts.csv");
 
     writableStream.on("finish", function(){
         console.log("DONE!");
@@ -80,4 +79,3 @@ function csvPopulate(data){
 
 
 //TODO: Don't forget error handling
-//TODO: Write data to CSV file and save
