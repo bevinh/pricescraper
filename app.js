@@ -34,7 +34,6 @@ function logError(e){
 //the mkdirp module makes the folder, but if it already exists, it does nothing
 mkdirp(path, function (err) {
     if (err) console.error(err);
-    else console.log('Made data folder');
 });
 
 //make a request to the main page
@@ -93,15 +92,10 @@ function csvPopulate(data){
     var csvStream = csv.createWriteStream({headers: false}),
         writableStream = fs.createWriteStream("data/" + fileName + ".csv");
 
-    writableStream.on("finish", function(){
-        console.log("DONE!");
-    });
-
     csvStream.pipe(writableStream);
    //Pipe in each data object after iterating through them
     csvStream.write(data);
     csvStream.end();
 }
 
-//TODO: Don't forget error handling
 
