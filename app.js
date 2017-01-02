@@ -4,6 +4,7 @@ var scraperjs = require('scraperjs');
 var mkdirp = require('mkdirp');
 const fs = require('fs');
 var csv = require("fast-csv");
+const url = require('url');
 
 //setup the collection arrays
 var arrayOfHrefs = [];
@@ -40,15 +41,20 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
         shirtScraping();
     });
 function shirtScraping() {
+    var pathName = '';
     for (i = 0; i < arrayOfHrefs.length; i++) {
         scraperjs.StaticScraper.create(arrayOfHrefs[i])
             .scrape(function ($) {
+                pathName = arrayOfHrefs[i];
                 return {
-                    shirt: $(".shirt-picture span img").first().attr("src"),
                     title: $(".shirt-details h1").first().contents().filter(function() {
-                        return this.nodeType == 3;
-                    }).text(),
-                    price: $(".price").first().text()
+                    return this.nodeType == 3;
+                }).text(),
+                    price: $(".price").first().text(),
+                    imageURL: $(".shirt-picture span img").first().attr("src"),
+                    url: pathName,
+                    time: new Date().toLocaleString()
+
                 };
             })
             .then(function (data, options) {
@@ -63,14 +69,22 @@ function shirtScraping() {
 }
 
 function csvPopulate(data){
+    //Get the date for the file to be written
+    var date = new Date();
+    var day = date.getDate();
+    var month = date.getMonth();
+    var year = date.getFullYear();
+    var fileName = year + "-" + month + "-" + day;
+    //create the CSV object and the stream object of data to write to the file system
     var csvStream = csv.createWriteStream({headers: true}),
-        writableStream = fs.createWriteStream("data/shirts.csv");
+        writableStream = fs.createWriteStream("data/" + fileName + ".csv");
 
     writableStream.on("finish", function(){
         console.log("DONE!");
     });
 
     csvStream.pipe(writableStream);
+   //Pipe in each data object after iterating through them
     for(i=0;i<data.length;i++){
         csvStream.write(data[i]);
     }
