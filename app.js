@@ -30,62 +30,31 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
                 shirtLink += scrapeArray[i];
                 arrayOfHrefs.push(shirtLink);
             }
-            console.log(arrayOfHrefs);
         }
 
         scrapeArrayLinks();
-        //scrape for the images, based on this array
-        imageScraping();
-        //scrape for the details, based on this array
-        detailsScraping();
-
-
+        //scrape for the shirt details, based on this array
+        shirtScraping();
     });
-function imageScraping() {
+function shirtScraping() {
     for (i = 0; i < arrayOfHrefs.length; i++) {
         scraperjs.StaticScraper.create(arrayOfHrefs[i])
             .scrape(function ($) {
-                return $(".shirt-picture span img").map(function(){
-                    return $(this).attr("src");
-                }).get();
+                return {
+                    shirt: $(".shirt-picture span img").first().attr("src"),
+                    title: $(".shirt-details h1").first().contents().filter(function() {
+                        return this.nodeType == 3;
+                    }).text(),
+                    price: $(".price").first().text()
+                };
             })
-            .then(function (shirtImg) {
-                var img = shirtImg;
-                arrayOfImages.push(img);
-                console.log(arrayOfImages);
+            .then(function (data, options) {
+                console.log(data);
             })
-
     }
 }
-function detailsScraping() {
-    for (i = 0; i < arrayOfHrefs.length; i++) {
-        scraperjs.StaticScraper.create(arrayOfHrefs[i])
-            .scrape(function ($) {
-                return $(".shirt-details h1").map(function(){
-                    return $(this).text();
-                }).get();
-            })
-            .then(function (shirtTitle) {
-                var title = shirtTitle;
-                arrayOfTitles.push(title);
-                console.log(parseDetailsArray(title));
-            })
-
-    }
-}
-function parseDetailsArray(detailsArray){
-    for (i=0;i < detailsArray.length; i++){
-        var titleSplit = detailsArray[i].substr(detailsArray[i].indexOf(' ')+1);
-        console.log(titleSplit);
-        putTogetherArray.push(titleSplit);
-        var priceSplit = detailsArray[i].substr(0,detailsArray[i].indexOf(' '));
-        console.log(priceSplit);
-        putTogetherArray.push(priceSplit);
-    }
-    console.log(putTogetherArray);
-}
 
 
 
-
+//TODO: Don't forget error handling
 //TODO: Write data to CSV file and save
