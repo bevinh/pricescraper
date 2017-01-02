@@ -9,10 +9,11 @@
   "author": "Bevin Hernandez",
   "license": "MIT",
   "dependencies": {
+    "cheerio": "^0.22.0",
     "fast-csv": "^2.3.0",
     "jquery": "^3.1.1",
     "mkdirp": "^0.5.1",
     "phantomjs": "^2.1.7",
-    "scraperjs": "^1.2.0"
+    "request": "^2.79.0"
   }
 }
