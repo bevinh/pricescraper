@@ -29,6 +29,7 @@ var dataKept = [];
         fs.appendFileSync(path, eWrite, encoding='utf8');
 } */
 
+//variable needed to write the scraper-error file with my quicklog-easy module
 var errorPath = 'scraper-error.log';
 
 //the mkdirp module makes the folder, but if it already exists, it does nothing
