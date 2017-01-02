@@ -4,6 +4,7 @@ var mkdirp = require('mkdirp');
 const fs = require('fs');
 var csv = require("fast-csv");
 const url = require('url');
+
 var request = require('request');
 var cheerio = require('cheerio');
 
@@ -29,16 +30,15 @@ mkdirp(path, function (err) {
 request('http://www.shirts4mike.com/shirts.php', function (error, response, body) {
     //Check for any errors
     if(error){
-        return console.log('Oops, something went wrong, looks like an error:', error);
+        return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', error);
     }
 
     //Check for the status code
     if(response.statusCode !== 200){
-        return console.log('Oops, something went wrong, looks like an error:', response.statusCode);
+        return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', response.statusCode);
     }
     var $ = cheerio.load(body);
     $('.products li a').each(function(i, element){
-        //console.log($(this).attr("href"))
         hrefMike = "http://www.shirts4mike.com/" + $(this).attr("href")
         arrayOfHrefs.push(hrefMike);
     });
@@ -51,12 +51,12 @@ function getShirtData(shirtLink) {
     request(shirtLink, function (error, response, body) {
         //Check for any errors
         if (error) {
-            return console.log('Oops, something went wrong, looks like an error:', error);
+            return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', error);
         }
 
         //Check for the status code
         if (response.statusCode !== 200) {
-            return console.log('Oops, something went wrong, looks like an error:', response.statusCode);
+            return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', response.statusCode);
         }
         var $ = cheerio.load(body);
         shirtTitle = $('.shirt-details h1').first().contents().filter(function () {
@@ -79,7 +79,7 @@ function csvPopulate(data){
     var year = date.getFullYear();
     var fileName = year + "-" + month + "-" + day;
     //create the CSV object and the stream object of data to write to the file system
-    var csvStream = csv.createWriteStream({headers: true}),
+    var csvStream = csv.createWriteStream({headers: false}),
         writableStream = fs.createWriteStream("data/" + fileName + ".csv");
 
     writableStream.on("finish", function(){
@@ -92,5 +92,5 @@ function csvPopulate(data){
     csvStream.end();
 }
 
-//TODO: Figure out how to make data maybe not one long horizontal stream lol
 //TODO: Don't forget error handling
+//TODO: Take a look at Winston

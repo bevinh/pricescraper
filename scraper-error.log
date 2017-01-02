@@ -1,0 +1,7 @@
+[Sun Jan 01 2017 23:05:50 GMT-0500 (EST)] ERROR 1483329950803Oops, something went wrong, looks like an error: { [Error: getaddrinfo ENOTFOUND www.shirts4mike.com www.shirts4mike.com:80]
+  code: 'ENOTFOUND',
+  errno: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'www.shirts4mike.com',
+  host: 'www.shirts4mike.com',
+  port: 80 }
