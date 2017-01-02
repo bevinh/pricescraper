@@ -1,9 +1,8 @@
 /* Content Scraper for Mike's T-shirts, a project by Bevin Hernandez for the Treehouse Full Stack Javascript TechDegree */
 
 var mkdirp = require('mkdirp');
-const fs = require('fs');
+var fs = require('fs');
 var csv = require("fast-csv");
-const url = require('url');
 var request = require('request');
 var cheerio = require('cheerio');
 
@@ -49,7 +48,7 @@ request('http://www.shirts4mike.com/shirts.php', function (error, response, body
     }
     var $ = cheerio.load(body);
     $('.products li a').each(function(i, element){
-        hrefMike = "http://www.shirts4mike.com/" + $(this).attr("href")
+        hrefMike = "http://www.shirts4mike.com/" + $(this).attr("href");
         arrayOfHrefs.push(hrefMike);
     });
     for(i=0;i<arrayOfHrefs.length;i++){
@@ -78,7 +77,7 @@ function getShirtData(shirtLink) {
         shirtTime = new Date().toLocaleString();
         dataKept.push(shirtTitle, shirtPrice, shirtImage, shirtUrl, shirtTime);
         csvPopulate(dataKept);
-    })
+    });
 }
 
 function csvPopulate(data){
