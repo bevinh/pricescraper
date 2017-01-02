@@ -4,7 +4,6 @@ var mkdirp = require('mkdirp');
 const fs = require('fs');
 var csv = require("fast-csv");
 const url = require('url');
-
 var request = require('request');
 var cheerio = require('cheerio');
 
@@ -20,6 +19,18 @@ var shirtUrl;
 var shirtTime;
 var dataKept = [];
 
+//write the function to log any errors to the scraper-error.log file
+function logError(e){
+    var path = 'scraper-error.log';
+    var d = new Date();
+    var eWrite = "[" + d + " ]";
+    eWrite += ":" + e + "\n";
+
+        fs.appendFileSync(path, eWrite, encoding='utf8');
+        console.log(eWrite);
+
+}
+
 //the mkdirp module makes the folder, but if it already exists, it does nothing
 mkdirp(path, function (err) {
     if (err) console.error(err);
@@ -30,12 +41,12 @@ mkdirp(path, function (err) {
 request('http://www.shirts4mike.com/shirts.php', function (error, response, body) {
     //Check for any errors
     if(error){
-        return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', error);
+        return logError('Oops, something went wrong, looks like an error:', error);
     }
 
     //Check for the status code
     if(response.statusCode !== 200){
-        return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', response.statusCode);
+        return logError('Oops, something went wrong, looks like an error:', response.statusCode);
     }
     var $ = cheerio.load(body);
     $('.products li a').each(function(i, element){
@@ -51,12 +62,12 @@ function getShirtData(shirtLink) {
     request(shirtLink, function (error, response, body) {
         //Check for any errors
         if (error) {
-            return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', error);
+            return logError('Oops, something went wrong, looks like an error:', error);
         }
 
         //Check for the status code
         if (response.statusCode !== 200) {
-            return console.log(new Date().getTime() + 'Oops, something went wrong, looks like an error:', response.statusCode);
+            return logError('Oops, something went wrong, looks like an error:', response.statusCode);
         }
         var $ = cheerio.load(body);
         shirtTitle = $('.shirt-details h1').first().contents().filter(function () {
@@ -93,4 +104,4 @@ function csvPopulate(data){
 }
 
 //TODO: Don't forget error handling
-//TODO: Take a look at Winston
+
