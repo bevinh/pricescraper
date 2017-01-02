@@ -1,11 +1,13 @@
 var scraperjs = require('scraperjs');
 var mkdirp = require('mkdirp');
+const fs = require('fs');
+var csv = require("fast-csv");
+
 //setup the collection arrays
 var arrayOfHrefs = [];
-var arrayOfTitles = [];
-var arrayOfImages = [];
 var putTogetherArray = [];
 var path = "data";
+var dataKept = [];
 
 //the mkdirp module makes the folder, but if it already exists, it does nothing
 mkdirp(path, function (err) {
@@ -35,6 +37,7 @@ scraperjs.StaticScraper.create('http://www.shirts4mike.com/shirts.php')
         scrapeArrayLinks();
         //scrape for the shirt details, based on this array
         shirtScraping();
+
     });
 function shirtScraping() {
     for (i = 0; i < arrayOfHrefs.length; i++) {
@@ -49,11 +52,31 @@ function shirtScraping() {
                 };
             })
             .then(function (data, options) {
-                console.log(data);
+              // console.log(data);
+                dataKept.push(data);
+                console.log(dataKept);
+                csvPopulate(dataKept);
             })
+
     }
+
 }
 
+function csvPopulate(data){
+    var csvStream = csv.createWriteStream({headers: true}),
+        writableStream = fs.createWriteStream("data/my.csv");
+
+    writableStream.on("finish", function(){
+        console.log("DONE!");
+    });
+
+    csvStream.pipe(writableStream);
+    for(i=0;i<data.length;i++){
+        csvStream.write(data[i]);
+    }
+
+    csvStream.end();
+}
 
 
 //TODO: Don't forget error handling
