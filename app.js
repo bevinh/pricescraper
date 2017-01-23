@@ -39,25 +39,29 @@ mkdirp(path, function (err) {
 });
 
 //make a request to the main page
-request('http://www.shirts4mike.com/shirts.php', function (error, response, body) {
-    //Check for any errors
-    if(error){
-        return logError('Oops, something went wrong, looks like an error:', error);
-    }
+    request('http://www.shirts4mike.com/shirts.php', function (error, response, body) {
+        //Check for any errors
+        if (error) {
+            return logError('Oops, something went wrong, looks like an error:', error);
+        }
 
-    //Check for the status code
-    if(response.statusCode !== 200){
-        return logError('Oops, something went wrong, looks like an error:', response.statusCode);
-    }
-    var $ = cheerio.load(body);
-    $('.products li a').each(function(i, element){
-        hrefMike = "http://www.shirts4mike.com/" + $(this).attr("href");
-        arrayOfHrefs.push(hrefMike);
+        //Check for the status code
+        if (response.statusCode !== 200) {
+            return logError('Oops, something went wrong, looks like an error:', response.statusCode);
+        }
+        var $ = cheerio.load(body);
+        $('.products li a').each(function (i, element) {
+            hrefMike = "http://www.shirts4mike.com/" + $(this).attr("href");
+            arrayOfHrefs.push(hrefMike);
+        });
+
+        for (i = 0; i < arrayOfHrefs.length; i++) {
+            getShirtData(arrayOfHrefs[i]);
+        }
+
     });
-    for(i=0;i<arrayOfHrefs.length;i++){
-        getShirtData(arrayOfHrefs[i]);
-    }
-});
+
+
 
 function getShirtData(shirtLink) {
     request(shirtLink, function (error, response, body) {
@@ -70,6 +74,7 @@ function getShirtData(shirtLink) {
         if (response.statusCode !== 200) {
             return logError('Oops, something went wrong, looks like an error:', response.statusCode);
         }
+
        //load the body of the html page we've requested
         var $ = cheerio.load(body);
 
@@ -81,31 +86,30 @@ function getShirtData(shirtLink) {
         shirtImage = $(".shirt-picture span img").first().attr("src");
         shirtUrl = shirtLink;
         shirtTime = new Date().toLocaleString();
-
+        //make an array to hold each shirt set
+        var newArray = [];
+        //add the new array items
+        newArray.push(shirtTitle, shirtPrice, shirtImage, shirtUrl, shirtTime, '\n');
         //push each of these into an array
-        dataKept.push(shirtTitle, shirtPrice, shirtImage, shirtUrl, shirtTime);
-
-        //call the function to write the csv!
+        dataKept.push(newArray);
+        //populate the CSV
         csvPopulate(dataKept);
     });
+
+
 }
 
 function csvPopulate(data){
     //Get the date to create the filename
     var date = new Date();
     var day = date.getDate();
-    var month = date.getMonth();
+    var month = date.getMonth() + 1;
     var year = date.getFullYear();
     var fileName = year + "-" + month + "-" + day;
 
     //create the CSV object and the stream object of data to write to the file system
-    var csvStream = csv.createWriteStream({headers: false}),
-        writableStream = fs.createWriteStream("data/" + fileName + ".csv");
-
-    csvStream.pipe(writableStream);
-   //Pipe in each data object after iterating through them
-    csvStream.write(data);
-    csvStream.end();
+    csv
+        .writeToStream(fs.createWriteStream("data/" + fileName + ".csv"), data, {headers: ["Title", "Price", "ImageURL", "URL", "Time"]});
 }
 
 
